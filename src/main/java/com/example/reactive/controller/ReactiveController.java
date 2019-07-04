@@ -1,6 +1,7 @@
 package com.example.reactive.controller;
 
 import java.time.Duration;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -36,6 +37,11 @@ public class ReactiveController {
         Flux<WebFluxEvent> eventFlux = Flux.fromStream(Stream.generate(() -> new WebFluxEvent(new Random().nextLong(), new Date())));
         Flux<Long> durationFlux = Flux.interval(Duration.ofSeconds(1));
         return Flux.zip(eventFlux, durationFlux).map(Tuple2::getT1);
+    }
+
+    @GetMapping(path = "/stream-flux", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> streamFlux() {
+        return Flux.interval(Duration.ofSeconds(1)).map(sequence -> "Flux - " + LocalTime.now().toString());
     }
 
 }
