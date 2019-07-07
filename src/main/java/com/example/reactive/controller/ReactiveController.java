@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Random;
 import java.util.stream.Stream;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ import reactor.util.function.Tuple2;
 @RestController
 public class ReactiveController {
 
-    @RequestMapping(name = "/test", method = RequestMethod.GET)
+    /*@RequestMapping(name = "/test", method = RequestMethod.GET)
     public void sentEventStream() {
         WebClient.create("http://localhost:8080")
             .get()
@@ -39,7 +40,7 @@ public class ReactiveController {
         Flux<Long> durationFlux = Flux.interval(Duration.ofSeconds(1));
         return Flux.zip(durationFlux, eventFlux)
             .map(Tuple2::getT2);
-    }
+    }*/
 
     @GetMapping(path = "/stream-flux", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> streamFlux() {
@@ -71,6 +72,23 @@ public class ReactiveController {
                 .data("SSE - " + LocalTime.now()
                     .toString())
                 .build());
+    }
+
+    @GetMapping("/stream")
+    public void consumeServerSentEvent() {
+        
+        WebClient client = WebClient.create("http://localhost:8080");
+        
+        ParameterizedTypeReference<ServerSentEvent<String>> type = new ParameterizedTypeReference<ServerSentEvent<String>>() {};
+
+        Flux<ServerSentEvent<String>> eventStream = client.get()
+            .uri("/stream-sse")
+            .retrieve()
+            .bodyToFlux(type);
+
+        eventStream.subscribe(content -> System.out.println("Time: {} - event: name[{}], id [{}], content[{}] " + LocalTime.now() + content.event() + content.id() + content.data()), error -> System.out.println("Error receiving SSE: {}" + error),
+            () -> System.out.println("Completed!!!"));
+
     }
 
 }
