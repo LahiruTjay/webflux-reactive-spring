@@ -2,7 +2,6 @@ package com.example.reactive.controller;
 
 import java.time.Duration;
 import java.time.LocalTime;
-import java.util.Date;
 import java.util.Random;
 import java.util.stream.Stream;
 
@@ -10,15 +9,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.example.reactive.model.WebFluxEvent;
-
 import reactor.core.publisher.Flux;
-import reactor.util.function.Tuple2;
 
 @RestController
 public class ReactiveController {
@@ -33,7 +27,7 @@ public class ReactiveController {
             .bodyToFlux(WebFluxEvent.class)
             .subscribe(event -> System.out.println(event.toString()));
     }
-
+    
     @GetMapping(name = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     Flux<WebFluxEvent> getEventStream() {
         Flux<WebFluxEvent> eventFlux = Flux.fromStream(Stream.generate(() -> new WebFluxEvent(new Random().nextLong(), new Date())));
@@ -69,26 +63,23 @@ public class ReactiveController {
             .map(sequence -> ServerSentEvent.<String> builder()
                 .id(String.valueOf(sequence))
                 .event("periodic-event")
-                .data("SSE - " + LocalTime.now()
-                    .toString())
+                .data("SSE - " + LocalTime.now().toString())
                 .build());
     }
 
     @GetMapping("/stream")
     public void consumeServerSentEvent() {
-        
+
         WebClient client = WebClient.create("http://localhost:8080");
-        
-        ParameterizedTypeReference<ServerSentEvent<String>> type = new ParameterizedTypeReference<ServerSentEvent<String>>() {};
+        ParameterizedTypeReference<ServerSentEvent<String>> type = new ParameterizedTypeReference<ServerSentEvent<String>>() {
+        };
 
         Flux<ServerSentEvent<String>> eventStream = client.get()
             .uri("/stream-sse")
             .retrieve()
             .bodyToFlux(type);
 
-        eventStream.subscribe(content -> System.out.println("Time: {} - event: name[{}], id [{}], content[{}] " + LocalTime.now() + content.event() + content.id() + content.data()), error -> System.out.println("Error receiving SSE: {}" + error),
-            () -> System.out.println("Completed!!!"));
-
+        eventStream.subscribe(content -> System.out.println(LocalTime.now() + content.event() + content.id() + content.data()), error -> System.out.println("Error receiving SSE: {}" + error), () -> System.out.println("Completed!!!"));
     }
 
 }
