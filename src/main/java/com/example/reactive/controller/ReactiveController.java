@@ -63,7 +63,8 @@ public class ReactiveController {
             .map(sequence -> ServerSentEvent.<String> builder()
                 .id(String.valueOf(sequence))
                 .event("periodic-event")
-                .data("SSE - " + LocalTime.now().toString())
+                .data("SSE - " + LocalTime.now()
+                    .toString())
                 .build());
     }
 
