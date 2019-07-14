@@ -1,16 +1,14 @@
-package com.example.reactive.controller;
+package com.example.reactive.sse.controller;
 
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Random;
 import java.util.stream.Stream;
 
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.core.publisher.Flux;
 
@@ -66,21 +64,6 @@ public class ReactiveController {
                 .data("SSE - " + LocalTime.now()
                     .toString())
                 .build());
-    }
-
-    @GetMapping("/stream")
-    public void consumeServerSentEvent() {
-
-        WebClient client = WebClient.create("http://localhost:8080");
-        ParameterizedTypeReference<ServerSentEvent<String>> type = new ParameterizedTypeReference<ServerSentEvent<String>>() {
-        };
-
-        Flux<ServerSentEvent<String>> eventStream = client.get()
-            .uri("/stream-sse")
-            .retrieve()
-            .bodyToFlux(type);
-
-        eventStream.subscribe(content -> System.out.println(LocalTime.now() + content.event() + content.id() + content.data()), error -> System.out.println("Error receiving SSE: {}" + error), () -> System.out.println("Completed!!!"));
     }
 
 }

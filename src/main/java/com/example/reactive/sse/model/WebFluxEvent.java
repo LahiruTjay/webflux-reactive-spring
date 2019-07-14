@@ -1,4 +1,4 @@
-package com.example.reactive.model;
+package com.example.reactive.sse.model;
 
 import java.util.Date;
 
