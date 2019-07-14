@@ -13,16 +13,21 @@ public class ReactiveClient {
     public void serverSentEventClient() {
 
         WebClient client = WebClient.create("http://localhost:8080");
-        ParameterizedTypeReference<ServerSentEvent<String>> type = new ParameterizedTypeReference<ServerSentEvent<String>>() {
-        };
 
         Flux<ServerSentEvent<String>> eventStream = client.get()
             .uri("/stream-sse")
             .retrieve()
-            .bodyToFlux(type);
+            .bodyToFlux(new ParameterizedTypeReference<ServerSentEvent<String>>() {});
 
-        eventStream.subscribe(content -> System.out.println(LocalTime.now() + content.event() + content.id() + content.data()), error -> System.out.println("Error receiving SSE: {}" + error), () -> System.out.println("Completed!!!")); 
-       
+        eventStream.subscribe(content -> System.out.println(LocalTime.now() + content.event() + content.id() + content.data()), error -> System.out.println("Error receiving SSE: {}" + error), () -> System.out.println("Completed!!!"));
+
     }
+    
+    /*Flux<Employee> employeeFlux = client.get()
+        .uri("/employees")
+        .retrieve()
+        .bodyToFlux(Employee.class);
+               
+      employeeFlux.subscribe(System.out::println);*/
 
 }

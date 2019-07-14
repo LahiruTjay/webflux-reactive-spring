@@ -15,30 +15,10 @@ import reactor.core.publisher.Flux;
 @RestController
 public class ReactiveController {
 
-    /*@RequestMapping(name = "/test", method = RequestMethod.GET)
-    public void sentEventStream() {
-        WebClient.create("http://localhost:8080")
-            .get()
-            .uri("/events")
-            .accept(MediaType.TEXT_EVENT_STREAM)
-            .retrieve()
-            .bodyToFlux(WebFluxEvent.class)
-            .subscribe(event -> System.out.println(event.toString()));
-    }
-    
-    @GetMapping(name = "/events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    Flux<WebFluxEvent> getEventStream() {
-        Flux<WebFluxEvent> eventFlux = Flux.fromStream(Stream.generate(() -> new WebFluxEvent(new Random().nextLong(), new Date())));
-        Flux<Long> durationFlux = Flux.interval(Duration.ofSeconds(1));
-        return Flux.zip(durationFlux, eventFlux)
-            .map(Tuple2::getT2);
-    }*/
-
     @GetMapping(path = "/stream-flux", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> streamFlux() {
         return Flux.interval(Duration.ofSeconds(1))
-            .map(sequence -> "Flux - " + LocalTime.now()
-                .toString());
+            .map(sequence -> "Flux - " + LocalTime.now().toString());
     }
 
     @GetMapping(value = "/notifyonEvent", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
@@ -61,8 +41,7 @@ public class ReactiveController {
             .map(sequence -> ServerSentEvent.<String> builder()
                 .id(String.valueOf(sequence))
                 .event("periodic-event")
-                .data("SSE - " + LocalTime.now()
-                    .toString())
+                .data("SSE - " + LocalTime.now().toString())
                 .build());
     }
 
