@@ -22,12 +22,5 @@ public class ReactiveClient {
         eventStream.subscribe(content -> System.out.println(LocalTime.now() + content.event() + content.id() + content.data()), error -> System.out.println("Error receiving SSE: {}" + error), () -> System.out.println("Completed!!!"));
 
     }
-    
-    /*Flux<Employee> employeeFlux = client.get()
-        .uri("/employees")
-        .retrieve()
-        .bodyToFlux(Employee.class);
-               
-      employeeFlux.subscribe(System.out::println);*/
 
 }
