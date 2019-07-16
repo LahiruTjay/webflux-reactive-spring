@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 @RestController
-public class ReactiveController {
+public class ReactiveSSEController {
 
     @GetMapping(path = "/stream-flux", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> streamFlux() {

@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import reactor.core.publisher.Flux;
 
-public class ReactiveClient {
+public class ReactiveSSEClient {
 
     public void serverSentEventClient() {
 
