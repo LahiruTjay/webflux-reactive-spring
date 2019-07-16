@@ -4,7 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.example.reactive.sse.client.ReactiveSSEClient;
+import com.example.reactive.rest.client.ReactiveRestClient;
 
 @SpringBootApplication
 public class ReactiveApplication implements CommandLineRunner {
@@ -16,8 +16,11 @@ public class ReactiveApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        ReactiveSSEClient client = new ReactiveSSEClient();
-        client.serverSentEventClient();
+        // ReactiveSSEClient client = new ReactiveSSEClient();
+        // client.serverSentEventClient();
+
+        ReactiveRestClient restClient = new ReactiveRestClient();
+        System.out.println(restClient.getResult());
 
     }
 
